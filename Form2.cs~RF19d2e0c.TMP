@@ -1,0 +1,65 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using MySql.Data.MySqlClient;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+
+namespace login
+{
+    public partial class Form2 : Form
+    {
+        private string connectionString = "server=localhost;database=user_management;username=root;password=;";
+        public Form2()
+        {
+            InitializeComponent();
+        }
+
+        private void btnlogin_Click(object sender, EventArgs e)
+        {
+            string username = txtusername.Text;
+            string password = txtpass.Text;
+
+            MySqlConnection connection = new MySqlConnection(connectionString);
+            connection.Open();
+
+            MySqlCommand command = new MySqlCommand("SELECT * FROM users WHERE username = @username AND password = @password", connection);
+            command.Parameters.AddWithValue("@username", username);
+            command.Parameters.AddWithValue("@password", password);
+
+            MySqlDataReader reader = command.ExecuteReader();
+
+            if (reader.Read())
+            {
+                MessageBox.Show("Login successful!");
+                // Open Form2 or other form
+            }
+            else
+            {
+                MessageBox.Show("Invalid username or password");
+            }
+
+            reader.Close();
+            connection.Close();
+        }
+
+        private void ckbshow_CheckedChanged(object sender, EventArgs e)
+        {
+            if (ckbshow.Checked)
+            {
+                txtpass.PasswordChar = '\0';
+            }
+            else
+            {
+                txtpass.PasswordChar = '*';
+            }
+        }
+    }
+    
+}
